@@ -14,15 +14,8 @@ public class UserPresenterImpl implements UserPresenter {
     }
 
     @Override
-    public void resume() {
-        loadUserDetails();
-    }
-
-    @Override
-    public void pause() {}
-
-    @Override
     public void loadUserDetails() {
+        if (view == null) throw new ViewNotFoundException();
         int userId = view.getUserId();
         u = userRepository.getUser(userId);
         if (u == null) {
@@ -36,13 +29,15 @@ public class UserPresenterImpl implements UserPresenter {
     @Override
     public void setView(UserView view) {
         this.view = view;
+        loadUserDetails();
     }
 
     @Override
     public void saveUser() {
         if (u != null) {
 //            if (TextUtils.isEmpty(view.getFirstName()) || TextUtils.isEmpty(view.getLastName())) {
-            if (view.getFirstName().trim().equals("") || view.getLastName().trim().equals("")) {
+            if (view.getFirstName() == null || view.getFirstName().trim().equals("") ||
+                view.getLastName() == null || view.getLastName().trim().equals("")) {
                 view.showUserNameIsRequired();
             } else {
                 u.setFirstName(view.getFirstName());
